@@ -13,7 +13,7 @@ public static class ProductManager
         new Product
         {
             Id = 1,
-            Name = "Encahnted Scarf",
+            Name = "Enchanted Scarf",
             Price = 19.99M,
             IsAvailable = true,
             ProductTypeId = 1,
@@ -25,7 +25,7 @@ public static class ProductManager
             Name = "Draught of Living Death",
             Price = 2999.00M,
             IsAvailable = false,
-            ProductTypeId = 1,
+            ProductTypeId = 2,
             DateStocked = DateTime.Now.AddDays(-30)
         },
         new Product
@@ -57,23 +57,21 @@ public static class ProductManager
         }
     };
 
-
     public static void ViewProducts()
     {
-        if (Products.Count == 0)
+        if (!Products.Any())
         {
             Console.WriteLine("No products in inventory.");
             return;
         }
 
         Console.WriteLine("Products in inventory:");
-        for (int i = 0; i < Products.Count; i++)
+        foreach (var product in Products)
         {
-            var product = Products[i];
             var productType = ProductTypes.FirstOrDefault(pt => pt.Id == product.ProductTypeId)?.Name ?? "Unknown";
             string availability = product.IsAvailable ? "Yes" : "No";
 
-            Console.WriteLine($"{i + 1}. {product.Name} | ${product.Price:F2} | Available: {availability} | Type: {productType} | Days on Shelf: {product.DaysOnShelf}");
+            Console.WriteLine($"{product.Id}. {product.Name} | ${product.Price:F2} | Available: {availability} | Type: {productType} | Days on Shelf: {product.DaysOnShelf}");
         }
     }
 
@@ -113,11 +111,12 @@ public static class ProductManager
 
         Products.Add(new Product
         {
+            Id = Products.Any() ? Products.Max(p => p.Id) + 1 : 1,
             Name = name,
             Price = price,
             IsAvailable = isAvailable,
             ProductTypeId = productTypeId,
-            DateStocked = dateStocked // Set DateStocked
+            DateStocked = dateStocked
         });
 
         Console.WriteLine("Product added successfully!");
@@ -125,7 +124,7 @@ public static class ProductManager
 
     public static void DeleteProduct()
     {
-        if (Products.Count == 0)
+        if (!Products.Any())
         {
             Console.WriteLine("No products available to delete.");
             return;
@@ -134,10 +133,10 @@ public static class ProductManager
         ViewProducts();
         Console.WriteLine("\nEnter the number of the product to delete:");
 
-        if (int.TryParse(Console.ReadLine(), out int index) && index >= 1 && index <= Products.Count)
+        if (int.TryParse(Console.ReadLine(), out int id) && Products.Any(p => p.Id == id))
         {
-            var product = Products[index - 1];
-            Products.RemoveAt(index - 1);
+            var product = Products.First(p => p.Id == id);
+            Products.Remove(product);
             Console.WriteLine($"Product '{product.Name}' removed successfully!");
         }
         else
@@ -148,18 +147,18 @@ public static class ProductManager
 
     public static void UpdateProduct()
     {
-        if (Products.Count == 0)
+        if (!Products.Any())
         {
             Console.WriteLine("No products available to update.");
             return;
         }
 
         ViewProducts();
-        Console.WriteLine("\nEnter the number of the product to update:");
+        Console.WriteLine("\nEnter the ID of the product to update:");
 
-        if (int.TryParse(Console.ReadLine(), out int index) && index >= 1 && index <= Products.Count)
+        if (int.TryParse(Console.ReadLine(), out int id) && Products.Any(p => p.Id == id))
         {
-            var product = Products[index - 1];
+            var product = Products.First(p => p.Id == id);
 
             Console.WriteLine("Enter New Name (leave blank to keep the current name):");
             string newName = Console.ReadLine();
@@ -205,32 +204,31 @@ public static class ProductManager
     {
         Console.WriteLine("Select a product type to view:");
 
-        for (int i = 0; i < ProductTypes.Count; i++)
+        foreach (var productType in ProductTypes)
         {
-            Console.WriteLine($"{i + 1}. {ProductTypes[i].Name}");
+            Console.WriteLine($"{productType.Id}. {productType.Name}");
         }
 
-        if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > ProductTypes.Count)
+        if (!int.TryParse(Console.ReadLine(), out int choice) || !ProductTypes.Any(pt => pt.Id == choice))
         {
             Console.WriteLine("Invalid input. Returning to the main menu.");
             return;
         }
 
-        var selectedType = ProductTypes[choice - 1];
+        var selectedType = ProductTypes.First(pt => pt.Id == choice);
         var filteredProducts = Products.Where(p => p.ProductTypeId == selectedType.Id).ToList();
 
-        if (filteredProducts.Count == 0)
+        if (!filteredProducts.Any())
         {
             Console.WriteLine($"No products found in the category: {selectedType.Name}");
             return;
         }
 
         Console.WriteLine($"\nProducts in the {selectedType.Name} category:");
-        for (int i = 0; i < filteredProducts.Count; i++)
+        foreach (var product in filteredProducts)
         {
-            var product = filteredProducts[i];
             string availability = product.IsAvailable ? "Yes" : "No";
-            Console.WriteLine($"{i + 1}. {product.Name} | ${product.Price:F2} | Available: {availability} | Days on Shelf: {product.DaysOnShelf}");
+            Console.WriteLine($"{product.Id}. {product.Name} | ${product.Price:F2} | Available: {availability} | Days on Shelf: {product.DaysOnShelf}");
         }
     }
 }

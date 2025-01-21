@@ -39,7 +39,7 @@ Choose an option:
                     break;
                 case "4":
                     Console.Clear();
-                    ProductManager.UpdateProduct();
+                    ProductManager.UpdateProduct(); 
                     break;
                 case "5":
                     Console.Clear();
@@ -54,9 +54,13 @@ Choose an option:
                     break;
             }
 
-            Console.WriteLine("\nPress Enter to continue...");
-            Console.ReadLine();
-            Console.Clear();
+            // Pause before returning to the menu
+            if (choice != "0")
+            {
+                Console.WriteLine("\nPress Enter to continue...");
+                Console.ReadLine();
+                Console.Clear();
+            }
         }
         while (choice != "0");
     }
