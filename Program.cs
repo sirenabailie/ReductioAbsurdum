@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System;
+﻿using System;
 
 class Program
 {
@@ -28,7 +27,7 @@ Choose an option:
             {
                 case "1":
                     Console.Clear();
-                    ProductManager.ViewProducts();
+                    ProductManager.ViewProducts(); 
                     break;
                 case "2":
                     Console.Clear();
@@ -44,7 +43,7 @@ Choose an option:
                     break;
                 case "5":
                     Console.Clear();
-                    ProductManager.ViewProductsByType(); // Added option to view products by type
+                    ProductManager.ViewProductsByType(); 
                     break;
                 case "0":
                     Console.Clear();
